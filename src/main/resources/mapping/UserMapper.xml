@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eshore.wms.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.eshore.wms.pojo.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="login_name" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="phone_num" jdbcType="BIGINT" property="phoneNum" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, login_name, password, email, sex, creat_time, phone_num, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.eshore.wms.pojo.User">
+    insert into sys_user (id, name, login_name, 
+      password, email, sex, 
+      creat_time, phone_num, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, 
+      #{creatTime,jdbcType=TIMESTAMP}, #{phoneNum,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wms.pojo.User">
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="username != null">
+        login_name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="creatTime != null">
+        creat_time,
+      </if>
+      <if test="phoneNum != null">
+        phone_num,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null">
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phoneNum != null">
+        #{phoneNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eshore.wms.pojo.User">
+    update sys_user
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        login_name = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null">
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phoneNum != null">
+        phone_num = #{phoneNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eshore.wms.pojo.User">
+    update sys_user
+    set name = #{name,jdbcType=VARCHAR},
+      login_name = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      phone_num = #{phoneNum,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 通过登录名获取user -->
+  <select id="getUserByLoginName" resultMap="BaseResultMap">
+    <![CDATA[select * from sys_user]]>
+    <where>
+      <if test="username != null and username != ''">
+        login_name = #{username}
+      </if>
+    </where>
+  </select>
+
+  <!-- 获取user列表的总量 -->
+  <select id="usersSize" resultType="Integer">
+    <![CDATA[select count(*) from sys_user]]>
+    <where>
+      <if test="username != null and username != ''">
+        login_name = #{username}
+      </if>
+    </where>
+  </select>
+  <!--通过登录名拿到用户信息-->
+  <select id="getUserEntityByLoginName" resultMap="BaseResultMap">
+    select * from sys_user
+    <where>
+      login_name = #{username}
+    </where>
+  </select>
+
+  <!--按条件查询总数-->
+  <select id="selectCount" resultType="java.lang.Integer" parameterType="Map">
+    select count(1) from sys_user
+    <where>
+      <if test="name != null and name != ''">
+        name like "%"#{name}"%"
+      </if>
+    </where>
+  </select>
+
+  <select id="getList" resultMap="BaseResultMap" parameterType="Map">
+    select * from sys_user
+    <where>
+      <if test="name != null and name != ''">
+        name like "%"#{name}"%"
+      </if>
+    </where>
+    LIMIT #{startRow},#{size}
+  </select>
+
+</mapper>

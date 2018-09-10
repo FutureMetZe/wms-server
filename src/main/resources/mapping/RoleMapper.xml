@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eshore.wms.dao.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.eshore.wms.pojo.Role">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.eshore.wms.pojo.RoleWithBLOBs">
+    <result column="modules" jdbcType="LONGVARCHAR" property="modules" />
+    <result column="describe" jdbcType="LONGVARCHAR" property="describe" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role, name
+  </sql>
+  <sql id="Blob_Column_List">
+    modules, describe
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.eshore.wms.pojo.RoleWithBLOBs">
+    insert into sys_role (id, role, name, 
+      modules, describe)
+    values (#{id,jdbcType=INTEGER}, #{role,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{modules,jdbcType=LONGVARCHAR}, #{describe,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wms.pojo.RoleWithBLOBs">
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="modules != null">
+        modules,
+      </if>
+      <if test="describe != null">
+        `describe`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="modules != null">
+        #{modules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eshore.wms.pojo.RoleWithBLOBs">
+    update sys_role
+    <set>
+      <if test="role != null">
+        role = #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="modules != null">
+        modules = #{modules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="describe != null">
+        `describe` = #{describe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.eshore.wms.pojo.RoleWithBLOBs">
+    update sys_role
+    set role = #{role,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      modules = #{modules,jdbcType=LONGVARCHAR},
+      `describe` = #{describe,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eshore.wms.pojo.Role">
+    update sys_role
+    set role = #{role,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 获取role列表 -->
+  <select id="rolesList" resultMap="ResultMapWithBLOBs">
+    <![CDATA[select * from sys_role]]>
+    <![CDATA[ order by id ]]>
+    <if test="pageSize != null and start != null ">
+      limit #{start},#{pageSize}
+    </if>
+  </select>
+  <!-- 获取role列表的总量 -->
+  <select id="rolesSize" resultType="Integer">
+	    <![CDATA[select count(*) from sys_role]]>
+	</select>
+
+  <!-- 通过id得到Modules集合 -->
+  <select id="getModulesById" resultType="String">
+		select modules from
+		sys_role where id in (select role_id from r_user_role where user_id =
+		#{id})
+	</select>
+  <!-- 通过UserId得到对应的role -->
+  <select id="getRolesByUserId" resultType="String">
+		select `role` from
+		sys_role where id in (select role_id from r_user_role where user_id =
+		#{id})
+	</select>
+  <!-- 得到角色全部数据 -->
+  <select id="allRoles" resultMap="ResultMapWithBLOBs">
+		select * from sys_role
+	</select>
+	<!-- 删除角色信息 -->
+	<delete id="deleteRoles">
+		delete from sys_role
+		<where>
+			<if test="groupId !=null">
+				id in
+				<foreach collection="groupId" item="item" index="index"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+
+</mapper>
